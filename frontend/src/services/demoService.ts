@@ -514,7 +514,12 @@ Here is actionable, budget-conscious guidance aligned with UN SDG 2 nutrition pr
 // -------------------------------------------------------------
 // Direct Browser Gemini API Call (Optional if user enters key)
 // -------------------------------------------------------------
-export async function tryDirectGeminiApi(prompt: string, history: any[] = []): Promise<string | null> {
+export async function tryDirectGeminiApi(
+  prompt: string,
+  history: any[] = [],
+  systemInstructionText?: string,
+  base64Image?: string
+): Promise<string | null> {
   try {
     const userApiKey = localStorage.getItem('nutrizero_gemini_api_key')?.trim();
     if (!userApiKey) return null;
@@ -522,7 +527,7 @@ export async function tryDirectGeminiApi(prompt: string, history: any[] = []): P
     const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${encodeURIComponent(userApiKey)}`;
 
     const contents: any[] = [];
-    if (Array.isArray(history)) {
+    if (Array.isArray(history) && history.length > 0) {
       for (const h of history.slice(-6)) {
         contents.push({
           role: h.role === 'assistant' ? 'model' : 'user',
@@ -530,15 +535,31 @@ export async function tryDirectGeminiApi(prompt: string, history: any[] = []): P
         });
       }
     }
+
+    const currentParts: any[] = [];
+
+    // If image is provided, include it as inline data for multimodal vision
+    if (base64Image) {
+      const cleanBase64 = base64Image.replace(/^data:image\/[a-zA-Z]+;base64,/, '');
+      currentParts.push({
+        inlineData: {
+          mimeType: 'image/jpeg',
+          data: cleanBase64
+        }
+      });
+    }
+
+    currentParts.push({ text: prompt });
+
     contents.push({
       role: 'user',
-      parts: [{ text: prompt }]
+      parts: currentParts
     });
 
     const systemInstruction = {
       role: 'user',
       parts: [{
-        text: "You are NutriZero AI, an official UN SDG 2 Zero Hunger food, nutrition, budget meal planning, and food waste assistant. Provide practical, empathetic, and evidence-based answers with realistic prices (in ₹ INR and $ USD) and safe food preparation tips."
+        text: systemInstructionText || "You are NutriZero AI, an official UN SDG 2 Zero Hunger food, nutrition, budget meal planning, and food waste assistant. Provide practical, empathetic, and evidence-based answers with realistic prices (in ₹ INR and $ USD) and safe food preparation tips."
       }]
     };
 
@@ -549,13 +570,14 @@ export async function tryDirectGeminiApi(prompt: string, history: any[] = []): P
         contents: [systemInstruction, ...contents],
         generationConfig: {
           temperature: 0.7,
-          maxOutputTokens: 1000
+          maxOutputTokens: 1200
         }
       })
     });
 
     if (!response.ok) {
-      console.warn('Direct Gemini API call failed with status:', response.status);
+      const errJson = await response.json().catch(() => ({}));
+      console.warn('Direct Gemini API call returned error:', response.status, errJson);
       return null;
     }
 
@@ -572,23 +594,22 @@ export async function tryDirectGeminiApi(prompt: string, history: any[] = []): P
 // Universal Request Dispatcher
 // -------------------------------------------------------------
 export async function handleDemoRequest(url: string, method: string = 'GET', data?: any): Promise<DemoResponse> {
-  // Add realistic micro-delay for realistic UI feedback
-  await new Promise(resolve => setTimeout(resolve, 300));
-
   const cleanUrl = url.split('?')[0].replace(/\/$/, '');
+  const hasCustomKey = !!localStorage.getItem('nutrizero_gemini_api_key');
 
   // 1. Gemini / Server Status
   if (cleanUrl.endsWith('/api/gemini-status') || cleanUrl.endsWith('/health') || cleanUrl.endsWith('/api/health')) {
-    const hasCustomKey = !!localStorage.getItem('nutrizero_gemini_api_key');
     return {
       status: 200,
       statusText: 'OK',
       data: {
         connected: true,
         provider: hasCustomKey ? 'Google Gemini API (Direct Browser)' : 'NutriZero Standalone Engine',
-        model: hasCustomKey ? 'gemini-1.5-flash (Live Key)' : 'NutriZero AI Offline Knowledge Engine',
+        model: hasCustomKey ? 'gemini-1.5-flash (Live API Key)' : 'NutriZero AI Offline Knowledge Engine',
         status: 'healthy',
-        message: 'Standalone Demo Mode is active. All features fully operational without a server!'
+        message: hasCustomKey 
+          ? 'Live Google Gemini AI is connected and active!'
+          : 'Standalone Demo Mode is active. Enter a Gemini API Key anytime for real-time live answers.'
       }
     };
   }
@@ -623,6 +644,28 @@ export async function handleDemoRequest(url: string, method: string = 'GET', dat
   // 5. Pantry Chef Recipe
   if (cleanUrl.endsWith('/api/recipe')) {
     const ingredients = Array.isArray(data?.ingredients) ? data.ingredients : ['Vegetables', 'Rice'];
+
+    if (hasCustomKey) {
+      const liveAi = await tryDirectGeminiApi(
+        `Create a delicious budget-friendly zero-waste recipe using these available ingredients: ${ingredients.join(', ')}. Include Prep Time, Cook Time, Estimated Cost per portion in INR (₹) and USD ($), required pantry spices, step-by-step numbered cooking instructions, and an SDG 2 Zero Waste tip.`
+      );
+      if (liveAi) {
+        return {
+          status: 200,
+          statusText: 'OK',
+          data: {
+            reply: liveAi,
+            ingredients,
+            followUps: [
+              "What side dish pairs well with this?",
+              "How to store leftovers of this recipe?",
+              "Can I freeze this for next week?"
+            ]
+          }
+        };
+      }
+    }
+
     return {
       status: 200,
       statusText: 'OK',
@@ -632,7 +675,34 @@ export async function handleDemoRequest(url: string, method: string = 'GET', dat
 
   // 6. Recipe from Image
   if (cleanUrl.endsWith('/api/recipe-from-image')) {
-    const prompt = data?.prompt || 'Fresh ingredients photo';
+    const prompt = data?.prompt || 'What recipe can I cook with these ingredients?';
+    const image = data?.image;
+
+    if (hasCustomKey && image) {
+      const liveAi = await tryDirectGeminiApi(
+        prompt,
+        [],
+        "You are NutriZero AI. Analyze the food or pantry ingredients shown in this photo. Suggest a practical, budget-conscious zero-waste recipe with measurements and step-by-step instructions.",
+        image
+      );
+      if (liveAi) {
+        return {
+          status: 200,
+          statusText: 'OK',
+          data: {
+            reply: liveAi,
+            followUps: [
+              "How long will this stay fresh?",
+              "What can I substitute if I run out of oil?",
+              "Suggest a budget dessert"
+            ],
+            model: "gemini-1.5-flash (Live Vision)",
+            provider: "Google Gemini"
+          }
+        };
+      }
+    }
+
     return {
       status: 200,
       statusText: 'OK',
@@ -654,6 +724,30 @@ export async function handleDemoRequest(url: string, method: string = 'GET', dat
     const budget = data?.budget || '₹150';
     const people = data?.people || 1;
     const diet = data?.diet || 'Vegetarian';
+
+    if (hasCustomKey) {
+      const liveAi = await tryDirectGeminiApi(
+        `Create a realistic 1-day balanced budget meal plan for ${people} person(s) with daily budget ${budget} following a ${diet} diet. Include Breakfast, Lunch, Snack, Dinner, estimated cost per meal in INR and USD, macronutrient summary (protein, carbs, calories), and grocery saving tips.`
+      );
+      if (liveAi) {
+        return {
+          status: 200,
+          statusText: 'OK',
+          data: {
+            reply: liveAi,
+            budget,
+            people,
+            diet,
+            followUps: [
+              "Show me the grocery shopping list for this plan",
+              "Can I swap the protein source?",
+              "How to meal-prep this for 3 days?"
+            ]
+          }
+        };
+      }
+    }
+
     return {
       status: 200,
       statusText: 'OK',
@@ -664,6 +758,28 @@ export async function handleDemoRequest(url: string, method: string = 'GET', dat
   // 8. Food Waste Reducer
   if (cleanUrl.endsWith('/api/food-waste')) {
     const leftover = data?.leftover || 'leftover food';
+
+    if (hasCustomKey) {
+      const liveAi = await tryDirectGeminiApi(
+        `Give 3 creative culinary recipes and safe food storage guidelines to transform this leftover item: "${leftover}". Explain safe temperature thresholds and how this prevents household food loss.`
+      );
+      if (liveAi) {
+        return {
+          status: 200,
+          statusText: 'OK',
+          data: {
+            reply: liveAi,
+            leftover,
+            followUps: [
+              `How long can I store ${leftover} in the freezer?`,
+              `How to test if ${leftover} is safe to eat?`,
+              `Give me another quick recipe`
+            ]
+          }
+        };
+      }
+    }
+
     return {
       status: 200,
       statusText: 'OK',
@@ -676,6 +792,29 @@ export async function handleDemoRequest(url: string, method: string = 'GET', dat
     const budget = data?.budget || '₹500';
     const people = data?.people || 2;
     const preferences = data?.preferences || 'Affordable nutritious staples';
+
+    if (hasCustomKey) {
+      const liveAi = await tryDirectGeminiApi(
+        `Create a prioritized budget grocery shopping list for a household of ${people} people with target budget ${budget} and dietary focus: "${preferences}". Group into Priority 1: Staples, Priority 2: Produce, Priority 3: Proteins/Fats, with estimated cost breakdown.`
+      );
+      if (liveAi) {
+        return {
+          status: 200,
+          statusText: 'OK',
+          data: {
+            reply: liveAi,
+            budget,
+            people,
+            followUps: [
+              "How to store these items for longest freshness?",
+              "What are the best items to buy in bulk?",
+              "Suggest a 7-day meal plan from this list"
+            ]
+          }
+        };
+      }
+    }
+
     return {
       status: 200,
       statusText: 'OK',
@@ -688,23 +827,25 @@ export async function handleDemoRequest(url: string, method: string = 'GET', dat
     const message = data?.message || '';
     const history = data?.history || [];
 
-    // Check if user has an optional direct Gemini API key saved in browser
-    const liveAiText = await tryDirectGeminiApi(message, history);
-    if (liveAiText) {
-      return {
-        status: 200,
-        statusText: 'OK',
-        data: {
-          reply: liveAiText,
-          followUps: [
-            "Tell me more details about this",
-            "How does this relate to SDG 2 Zero Hunger?",
-            "Give me a budget-friendly shopping tip"
-          ],
-          model: "gemini-1.5-flash (Live API)",
-          provider: "Google Gemini"
-        }
-      };
+    // If custom API key is present, call live Google Gemini API
+    if (hasCustomKey) {
+      const liveAiText = await tryDirectGeminiApi(message, history);
+      if (liveAiText) {
+        return {
+          status: 200,
+          statusText: 'OK',
+          data: {
+            reply: liveAiText,
+            followUps: [
+              "Tell me more details about this",
+              "How does this relate to SDG 2 Zero Hunger?",
+              "Give me an affordable recipe tip"
+            ],
+            model: "gemini-1.5-flash (Live Google Gemini)",
+            provider: "Google Gemini"
+          }
+        };
+      }
     }
 
     return {
