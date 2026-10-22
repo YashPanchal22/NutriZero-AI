@@ -408,33 +408,201 @@ export function generateDemoGroceryPlan(budget: string, people: number, preferen
 }
 
 export function generateDemoChatResponse(message: string): { reply: string; followUps: string[]; model: string; provider: string } {
-  const lower = message.toLowerCase();
+  const lower = message.toLowerCase().trim();
 
-  let reply = "";
-  let followUps = [
-    "What can I cook with leftover rice and eggs?",
-    "Show me a 1-day budget meal plan for ₹150",
-    "How does NutriZero AI support UN SDG 2?"
-  ];
+  // 1. Check for White Sauce Pasta / Pasta dishes
+  if (
+    lower.includes("white sauce") ||
+    lower.includes("white sos") ||
+    lower.includes("white pasta") ||
+    lower.includes("pasta") ||
+    lower.includes("macaroni") ||
+    lower.includes("alfredo")
+  ) {
+    return {
+      reply: `### 🍝 Creamy White Sauce Pasta (Pasta al Béchamel)
 
-  if (lower.includes("hello") || lower.includes("hi") || lower.includes("hey") || lower.includes("who are you")) {
-    reply = `Hello! 👋 I am **NutriZero AI**, your intelligent UN SDG 2 Zero Hunger assistant.
+A delicious, restaurant-style creamy pasta made with simple, budget-friendly kitchen staples!
 
-I help you:
-- 🥗 **Cook smart recipes** using ingredients currently in your pantry
-- 💰 **Plan healthy, budget-conscious meals** for your family
-- ♻️ **Transform leftovers** and eliminate kitchen food waste
-- 🛡️ **Store foods safely** to prevent spoilage and bacteria
-- 📊 **Understand essential nutrition** to ensure complete dietary health
+**⏱️ Prep Time:** 10 mins | **🔥 Cook Time:** 15 mins | **👥 Servings:** 2 | **💰 Cost:** ~₹65 - ₹85 ($0.80)
 
-*How can I assist you with your food or kitchen today? Feel free to ask a recipe, ingredient nutrition question, or meal planning tip!*`;
-    followUps = [
-      "Generate a high-protein recipe with lentils and onions",
-      "How to store cooked rice safely?",
-      "What are the 4 pillars of food security?"
-    ];
-  } else if (lower.includes("sdg") || lower.includes("hunger") || lower.includes("zero hunger")) {
-    reply = `### 🌍 UN Sustainable Development Goal 2: Zero Hunger
+---
+
+#### 🛒 Ingredients Needed:
+- **Pasta:** 1.5 cups (Penne, Macaroni, or Fusilli)
+- **Butter / Cooking Oil:** 2 tablespoons
+- **All-Purpose Flour (Maida) or Atta:** 2 tablespoons
+- **Milk:** 1.5 to 2 cups (room temperature or warm)
+- **Garlic:** 3-4 cloves (finely minced)
+- **Vegetables:** 1/2 cup diced (capsicum/bell peppers, sweet corn, onions, or carrots)
+- **Seasonings:** 1/2 tsp black pepper, 1 tsp oregano/mixed Italian herbs, 1/2 tsp chili flakes, salt to taste
+- **Cheese (Optional):** 2 tbsp grated processed cheese or mozzarella
+
+---
+
+#### 🧑‍🍳 Step-by-Step Instructions:
+
+1. **Boil the Pasta:**
+   - In a pot, bring 4 cups of water to a rolling boil with 1 tsp salt and 1/2 tsp oil.
+   - Add pasta and cook for **8-10 minutes** until *al dente* (cooked through with a slight bite).
+   - **Crucial Tip:** Drain and reserve **1/4 cup of the starchy pasta water** before draining completely!
+
+2. **Sauté the Vegetables:**
+   - Heat 1 tsp butter or oil in a pan over medium flame.
+   - Add minced garlic and sauté for 30 seconds until fragrant.
+   - Toss in chopped vegetables and sauté on high heat for **2 minutes** (keep them crisp). Transfer to a plate.
+
+3. **Make the Smooth White Sauce (Roux):**
+   - In the same pan, melt 2 tbsp butter over low flame.
+   - Add 2 tbsp flour and stir continuously with a whisk or spoon for **1-2 minutes** on low heat until bubbly and aromatic (do not let it turn brown).
+   - Slowly pour in milk in small batches, whisking vigorously to **prevent any lumps** from forming.
+   - Simmer on medium-low heat for 3-4 minutes until the sauce thickens and coats the back of a spoon.
+
+4. **Season & Combine:**
+   - Add salt, crushed black pepper, oregano, and chili flakes. Stir in grated cheese if using.
+   - Add the sautéed vegetables and boiled pasta into the creamy sauce.
+   - If the sauce seems too thick, pour in 2-3 tablespoons of the reserved pasta water to achieve a glossy, velvety consistency.
+   - Toss gently on low heat for 1 minute so the pasta absorbs the creamy sauce.
+
+5. **Serve Hot:**
+   - Garnish with extra chili flakes and dried oregano. Serve immediately!
+
+---
+💡 **SDG 2 Zero-Waste & Nutrition Tips:**
+- **Add Protein:** Toss in boiled chickpeas, sautéed tofu, or paneer cubes to make it a nutritionally complete high-protein meal.
+- **Prevent Waste:** Save broccoli stems and bell pepper tops—diced finely, they add crunch and dietary fiber without altering the sauce texture!`,
+      followUps: [
+        "How do I make a healthy red sauce pasta?",
+        "How to store and reheat leftover pasta without it drying out?",
+        "Can I make white sauce without butter or maida?"
+      ],
+      model: "NutriZero Culinary Engine",
+      provider: "NutriZero AI"
+    };
+  }
+
+  // 2. Check for Red Sauce Pasta / Tomato Pasta
+  if (lower.includes("red sauce") || lower.includes("arrabbiata") || lower.includes("tomato pasta")) {
+    return {
+      reply: `### 🍅 Zesty Red Sauce Pasta (Arrabbiata)
+
+A vibrant, nutrient-rich tomato garlic pasta packed with lycopene and antioxidants.
+
+**⏱️ Prep Time:** 10 mins | **🔥 Cook Time:** 15 mins | **💰 Cost:** ~₹50 - ₹65
+
+#### 🛒 Ingredients:
+- 1.5 cups boiled pasta (Penne/Fusilli)
+- 4 ripe tomatoes (blanched & pureed)
+- 4 cloves garlic (finely minced)
+- 1 small onion (finely chopped)
+- 1 tbsp olive or vegetable oil
+- 1 tsp chili flakes, 1 tsp oregano, salt & pepper to taste
+
+#### 🧑‍🍳 Steps:
+1. Boil tomatoes for 5 mins, peel skins and blend into a smooth puree.
+2. Heat oil, sauté minced garlic and onions until soft and translucent (2 mins).
+3. Pour tomato puree, add salt, oregano, and chili flakes. Simmer on medium heat for 7-8 mins until oil separates and sauce deepens in color.
+4. Add boiled pasta and toss well with 2 tbsp reserved pasta water. Simmer 1 minute and serve!`,
+      followUps: [
+        "Show me the Creamy White Sauce Pasta recipe",
+        "How to make high-protein pasta using lentils?",
+        "How to store pasta sauce in the fridge?"
+      ],
+      model: "NutriZero Culinary Engine",
+      provider: "NutriZero AI"
+    };
+  }
+
+  // 3. Check for Rice / Biryani / Fried Rice
+  if (lower.includes("fried rice") || lower.includes("biryani") || lower.includes("pulao") || lower.includes("khichdi")) {
+    return {
+      reply: `### 🍚 Quick Veggie Fried Rice / Zero-Waste Pulao
+
+Perfect for repurposing leftover cooked rice while packing in vitamins and fiber!
+
+**⏱️ Prep Time:** 8 mins | **🔥 Cook Time:** 10 mins | **💰 Cost:** ~₹35 - ₹50
+
+#### 🛒 Ingredients:
+- 2 cups cooked rice (cold or day-old works best)
+- 1 cup mixed veggies (carrots, beans, capsicum, cabbage, peas)
+- 1 tbsp oil, 3 cloves garlic (minced), 1 green chili
+- 1 tbsp soy sauce, 1 tsp vinegar, salt & pepper
+
+#### 🧑‍🍳 Instructions:
+1. Heat 1 tbsp oil in a wok on high flame.
+2. Sauté garlic and green chilies for 30 seconds.
+3. Add chopped vegetables and stir-fry on high heat for 2-3 mins so they stay crunchy.
+4. Add cold cooked rice, soy sauce, vinegar, black pepper, and salt.
+5. Toss vigorously on high flame for 2 minutes until hot and aromatic. Serve hot!`,
+      followUps: [
+        "How to make egg fried rice?",
+        "Safe storage rules for cooked rice",
+        "Give me a high-protein dal to pair with rice"
+      ],
+      model: "NutriZero Culinary Engine",
+      provider: "NutriZero AI"
+    };
+  }
+
+  // 4. Check for Dal / Curry / Paneer / Egg dishes
+  if (lower.includes("paneer") || lower.includes("dal tadka") || lower.includes("curry") || lower.includes("egg bhurji") || lower.includes("omelette")) {
+    return {
+      reply: `### 🍲 Quick Protein Curry / Dish Preparation
+
+**⏱️ Prep Time:** 10 mins | **🔥 Cook Time:** 15 mins | **💰 Cost:** ~₹40 - ₹65
+
+#### 🛒 Core Ingredients:
+- Main Protein: 150g Paneer cubes / 2 Farm Eggs / 1 cup boiled Dal
+- Aromatics: 1 onion (chopped), 1 tomato (chopped), 3 garlic cloves, 1 inch ginger
+- Spices: 1/2 tsp turmeric, 1 tsp coriander powder, 1/2 tsp red chili, 1/2 tsp garam masala, salt to taste
+- 1 tbsp cooking oil or ghee
+
+#### 🧑‍🍳 Cooking Steps:
+1. **Sauté Aromatics:** Heat oil, add cumin seeds, minced ginger and garlic. Add chopped onions and sauté until golden brown (3 mins).
+2. **Spice Base:** Add chopped tomatoes and all powdered spices with salt. Cook until tomatoes become mushy and oil leaves sides of pan (4 mins).
+3. **Incorporate Protein:** Add your paneer, whisked eggs, or cooked dal with 1/2 cup warm water.
+4. **Simmer:** Cook for 4-5 minutes on low flame. Garnish with chopped coriander and serve with roti or rice!`,
+      followUps: [
+        "What are the best plant-based protein alternatives?",
+        "How long can cooked curries stay fresh in the fridge?",
+        "Give me a ₹150 daily meal plan"
+      ],
+      model: "NutriZero Culinary Engine",
+      provider: "NutriZero AI"
+    };
+  }
+
+  // 5. Pure Greetings (only if strictly 1 to 3 words without a food request)
+  const isPureGreeting =
+    /^\s*(hi|hello|hey|hola|greetings|good morning|good evening|good afternoon|who are you)\s*$/i.test(message) ||
+    (/^\s*(hi|hello|hey)\b/i.test(message) && message.trim().split(/\s+/).length <= 2);
+
+  if (isPureGreeting) {
+    return {
+      reply: `Hello! 👋 I am **NutriZero AI**, your intelligent UN SDG 2 Zero Hunger food & nutrition assistant.
+
+I can help you:
+- 🍝 **Cook delicious recipes** (ask me for White Sauce Pasta, Fried Rice, Curries, and more!)
+- 🍳 **Pantry Chef:** Turn leftover ingredients in your kitchen into meals
+- 🍱 **Budget Meal Plans:** Balanced 1-day eating plans for ₹50 to ₹300
+- ♻️ **Zero Food Waste:** Creative hacks to save food from the trash
+- 🛡️ **Storage Guidelines:** How to store ingredients to stay fresh weeks longer
+
+*What dish would you like to cook or learn about today? Just tell me what you're craving!*`,
+      followUps: [
+        "How to make white sauce pasta?",
+        "Show me a 1-day budget meal plan for ₹150",
+        "What can I cook with leftover rice and eggs?"
+      ],
+      model: "NutriZero AI Assistant",
+      provider: "NutriZero AI Standalone"
+    };
+  }
+
+  // 6. UN SDG 2 & Food Security
+  if (lower.includes("sdg") || lower.includes("hunger") || lower.includes("zero hunger")) {
+    return {
+      reply: `### 🌍 UN Sustainable Development Goal 2: Zero Hunger
 
 **Goal 2** aims to **"End hunger, achieve food security and improved nutrition, and promote sustainable agriculture"** by the year 2030.
 
@@ -447,14 +615,21 @@ I help you:
 #### 💡 How Every Household Can Take Action:
 - **Minimize Food Loss:** Roughly 1/3 of all global food produced is lost or wasted.
 - **Champion Affordable Plant Proteins:** Incorporating lentils, pulses, and soya reduces costs while delivering complete amino acids.
-- **Sensible Storage:** Refrigerating leftovers within 2 hours prevents foodborne illness and saves household money.`;
-    followUps = [
-      "Tell me more about Target 2.1 & 2.2",
-      "What foods have the lowest environmental footprint?",
-      "How can I cut food waste at home?"
-    ];
-  } else if (lower.includes("protein") || lower.includes("muscle") || lower.includes("gym")) {
-    reply = `### 💪 High-Protein Budget Champions (Under ₹15 / Serving)
+- **Sensible Storage:** Refrigerating leftovers within 2 hours prevents foodborne illness and saves household money.`,
+      followUps: [
+        "Tell me more about Target 2.1 & 2.2",
+        "What foods have the lowest environmental footprint?",
+        "How can I cut food waste at home?"
+      ],
+      model: "NutriZero SDG 2 Hub",
+      provider: "NutriZero AI"
+    };
+  }
+
+  // 7. High-Protein guidance
+  if (lower.includes("protein") || lower.includes("muscle") || lower.includes("gym")) {
+    return {
+      reply: `### 💪 High-Protein Budget Champions (Under ₹15 / Serving)
 
 Getting high-quality protein does not require expensive supplements. Here are the top budget-friendly sources:
 
@@ -466,47 +641,62 @@ Getting high-quality protein does not require expensive supplements. Here are th
 | **Roasted Peanuts** | **26g** | ₹4.50 / 30g | Healthy fats + sustained satiety |
 | **Sprouted Green Gram** | **24g** | ₹8.00 / portion | Bioavailability boosts when sprouted |
 
-💡 **Pro Tip:** Combine grains (like rice or roti) with pulses (like dal or rajma) to form **complete proteins** containing all 9 essential amino acids!`;
-    followUps = [
-      "Create a 70g daily protein meal plan on a budget",
-      "How do I cook delicious soya chunks without a rubbery texture?",
-      "Are eggs or lentils better for muscle recovery?"
-    ];
-  } else if (lower.includes("storage") || lower.includes("spoil") || lower.includes("fridge") || lower.includes("shelf life")) {
-    reply = `### 🛡️ Smart Food Storage & Safety Best Practices
+💡 **Pro Tip:** Combine grains (like rice or roti) with pulses (like dal or rajma) to form **complete proteins** containing all 9 essential amino acids!`,
+      followUps: [
+        "Create a 70g daily protein meal plan on a budget",
+        "How do I cook delicious soya chunks without a rubbery texture?",
+        "Are eggs or lentils better for muscle recovery?"
+      ],
+      model: "NutriZero Nutrition Engine",
+      provider: "NutriZero AI"
+    };
+  }
+
+  // 8. Food Storage & Safety
+  if (lower.includes("storage") || lower.includes("spoil") || lower.includes("fridge") || lower.includes("shelf life")) {
+    return {
+      reply: `### 🛡️ Smart Food Storage & Safety Best Practices
 
 1. **The 2-Hour Rule:** Cooked rice, meats, and curries must be stored in the refrigerator within **2 hours** of cooking to prevent bacterial spore germination (e.g., *Bacillus cereus*).
 2. **Potatoes & Onions:** **Never store together!** Onions emit ethylene gas that causes potatoes to sprout prematurely and produce bitter solanine. Keep both in cool, ventilated baskets.
 3. **Fresh Leafy Greens:** Store unwashed in the crisper drawer wrapped in a dry cloth or paper towel. Only wash immediately before cooking to prevent bacterial slime.
-4. **Reheating Safety:** Always bring reheated leftovers to a steaming temperature (>74°C / 165°F) before eating.`;
-    followUps = [
-      "How long does cooked dal last in the fridge?",
-      "Can I freeze lemons or tomatoes?",
-      "Show all storage guidelines"
-    ];
-  } else {
-    reply = `### 🥗 NutriZero AI Guidance
-
-Thank you for your question about **"${message.slice(0, 50)}..."**!
-
-Here is actionable, budget-conscious guidance aligned with UN SDG 2 nutrition principles:
-
-1. **Nutrient-Dense Approach:** Focus on accessible staples like whole grains, legumes, seasonal vegetables, and healthy local fats.
-2. **Cost-Effective Satiety:** Pairing complex carbohydrates with dietary fiber and plant protein stabilizes energy and prevents midday hunger spikes.
-3. **Kitchen Sustainability:** Always utilize stems, peels, and leftovers in broths or quick stir-fries to maximize food value and eliminate waste.
-
-*Need a recipe with specific ingredients, a custom meal plan, or food storage advice? Try our specialized tools in the sidebar or ask right here!*`;
-    followUps = [
-      "Suggest a quick 15-minute dinner recipe",
-      "Give me a budget grocery shopping list",
-      "How do I store fresh vegetables longer?"
-    ];
+4. **Reheating Safety:** Always bring reheated leftovers to a steaming temperature (>74°C / 165°F) before eating.`,
+      followUps: [
+        "How long does cooked dal last in the fridge?",
+        "Can I freeze lemons or tomatoes?",
+        "Show all storage guidelines"
+      ],
+      model: "NutriZero Safety Guide",
+      provider: "NutriZero AI"
+    };
   }
 
+  // 9. Generic Food / Recipe Inquiry Fallback
   return {
-    reply,
-    followUps,
-    model: "NutriZero AI Knowledge Engine (Demo Mode)",
+    reply: `### 🍳 NutriZero Recipe & Preparation Guide: ${message.slice(0, 40)}
+
+Here is a practical, budget-conscious way to prepare **${message}**:
+
+#### 🛒 Recommended Ingredients:
+- Main Item / Base (1-2 portions)
+- Aromatics: 1 onion, 2 cloves garlic, 1 green chili
+- Cooking Medium: 1-2 tbsp oil or butter
+- Essential Spices: Salt, black pepper, pinch of turmeric or cumin
+- Garnish: Fresh coriander or herbs
+
+#### 🧑‍🍳 Easy Preparation Steps:
+1. **Prep:** Wash and dice all ingredients into uniform sizes for even cooking.
+2. **Base Tempering:** Heat oil in a pan, add aromatics, and sauté on medium heat until fragrant (2-3 mins).
+3. **Cook:** Add the main ingredient and seasonings. Sauté or simmer on medium-low flame until tender and thoroughly cooked.
+4. **Season & Garnish:** Adjust salt and pepper to taste. Top with fresh herbs and serve hot!
+
+💡 **SDG 2 Zero-Waste Note:** Keep peelings, stems, or leftover portions refrigerated in an airtight container within 2 hours to prevent spoilage and save grocery costs!`,
+    followUps: [
+      "How to make white sauce pasta?",
+      "Show me a 1-day budget meal plan for ₹150",
+      "Give me a zero-waste hack for leftovers"
+    ],
+    model: "NutriZero AI Knowledge Engine",
     provider: "NutriZero AI Standalone"
   };
 }
