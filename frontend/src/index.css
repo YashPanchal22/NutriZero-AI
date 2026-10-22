@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#090d16] text-slate-100 font-sans antialiased;
+  }
+}
+
+/* Custom sleek scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #090d16;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* Pulsing typing animation */
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Markdown styling inside AI messages */
+.prose-nutri h1, .prose-nutri h2, .prose-nutri h3 {
+  @apply font-display font-semibold text-emerald-400 mt-4 mb-2;
+}
+
+.prose-nutri h1 { @apply text-xl; }
+.prose-nutri h2 { @apply text-lg; }
+.prose-nutri h3 { @apply text-base; }
+
+.prose-nutri p {
+  @apply my-2 leading-relaxed text-slate-200;
+}
+
+.prose-nutri ul, .prose-nutri ol {
+  @apply my-2 pl-5 space-y-1;
+}
+
+.prose-nutri ul {
+  @apply list-disc;
+}
+
+.prose-nutri ol {
+  @apply list-decimal;
+}
+
+.prose-nutri li {
+  @apply text-slate-200 leading-relaxed;
+}
+
+.prose-nutri strong {
+  @apply font-semibold text-emerald-300;
+}
+
+.prose-nutri table {
+  @apply w-full my-3 border-collapse text-sm border border-slate-800 rounded-lg overflow-hidden;
+}
+
+.prose-nutri th {
+  @apply bg-slate-900 px-3 py-2 text-left font-semibold text-emerald-400 border-b border-slate-800;
+}
+
+.prose-nutri td {
+  @apply px-3 py-2 border-b border-slate-800/60 text-slate-300;
+}

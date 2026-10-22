@@ -1,0 +1,24 @@
+{
+  "name": "nutrizero-ai",
+  "version": "2.0.0",
+  "description": "NutriZero AI - UN SDG 2 Zero Hunger Food & Nutrition Assistant",
+  "scripts": {
+    "frontend:dev": "cd frontend && npm run dev",
+    "frontend:build": "cd frontend && npm run build",
+    "backend:dev": "cd backend && python -m uvicorn main:app --reload --port 8000",
+    "backend:test": "cd backend && python run_tests.py"
+  },
+  "keywords": [
+    "sdg2",
+    "zero-hunger",
+    "nutrition-ai",
+    "fastapi",
+    "react",
+    "vite",
+    "tailwind-css",
+    "gemini",
+    "google-genai"
+  ],
+  "author": "NutriZero AI Team",
+  "license": "MIT"
+}
