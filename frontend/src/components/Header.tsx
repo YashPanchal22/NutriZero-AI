@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, Sparkles, MessageSquare } from 'lucide-react';
+import { Menu, MessageSquare, Volume2, VolumeX } from 'lucide-react';
 import { getStoredSessions } from '../services/storage';
+import { isVoiceMuted, toggleVoiceMute } from '../services/voice';
 
 interface HeaderProps {
   onOpenSidebar: () => void;
@@ -14,16 +15,27 @@ export const Header: React.FC<HeaderProps> = ({
   title = 'AI Food & Nutrition Assistant',
 }) => {
   const [sessionsCount, setSessionsCount] = useState<number>(() => getStoredSessions().length);
+  const [muted, setMuted] = useState<boolean>(() => isVoiceMuted());
 
   useEffect(() => {
     const handleUpdate = () => setSessionsCount(getStoredSessions().length);
+    const handleMuteChange = (e: any) => setMuted(e.detail ?? isVoiceMuted());
+
     window.addEventListener('nutrizero_sessions_updated', handleUpdate);
     window.addEventListener('storage', handleUpdate);
+    window.addEventListener('nutrizero_voice_mute_changed', handleMuteChange);
+
     return () => {
       window.removeEventListener('nutrizero_sessions_updated', handleUpdate);
       window.removeEventListener('storage', handleUpdate);
+      window.removeEventListener('nutrizero_voice_mute_changed', handleMuteChange);
     };
   }, []);
+
+  const handleToggleMute = () => {
+    const next = toggleVoiceMute();
+    setMuted(next);
+  };
 
   return (
     <header className="h-14 border-b border-slate-800 bg-surface-900/60 backdrop-blur-md px-3 sm:px-4 flex items-center justify-between sticky top-0 z-30">
@@ -55,7 +67,26 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      <div className="flex items-center gap-2.5">
+      <div className="flex items-center gap-2">
+        {/* Voice Mute / Unmute Button */}
+        <button
+          type="button"
+          onClick={handleToggleMute}
+          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-medium border transition-all active:scale-95 shadow-sm ${
+            muted
+              ? 'bg-rose-950/40 text-rose-300 border-rose-800/40 hover:bg-rose-900/60'
+              : 'bg-emerald-950/40 text-emerald-300 border-emerald-800/40 hover:bg-emerald-900/60'
+          }`}
+          title={muted ? 'Voice is Muted (Click to Unmute)' : 'Voice is Active (Click to Mute)'}
+        >
+          {muted ? (
+            <VolumeX className="w-3.5 h-3.5 text-rose-400" />
+          ) : (
+            <Volume2 className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+          )}
+          <span className="hidden sm:inline">{muted ? 'Muted' : 'Voice'}</span>
+        </button>
+
         {onOpenHistory && (
           <button
             type="button"

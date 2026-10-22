@@ -1,16 +1,39 @@
 /**
  * NutriZero AI - Automatic Speech Synthesis Service
- * Automatically speaks AI responses using browser window.speechSynthesis.
- * Adheres strictly to all requirements:
- * - Speaks ONLY AI responses (never user messages)
- * - Automatically triggered when AI response arrives
- * - Cancels previous speech before starting new speech
- * - Prevents duplicate speech with ID tracking
- * - Speech failure silently handled without breaking chat
- * - Clean stop on page navigation
+ * Provides speech synthesis with full mute/unmute control.
+ * Default is MUTED to prevent unwanted sound playback.
  */
 
+const MUTE_STORAGE_KEY = 'nutrizero_voice_muted';
 let lastSpokenMessageId: string | null = null;
+
+export function isVoiceMuted(): boolean {
+  if (typeof window === 'undefined') return true;
+  const stored = localStorage.getItem(MUTE_STORAGE_KEY);
+  // Default to muted (true) for comfortable browsing unless user explicitly unmuted
+  if (stored === null) {
+    return true;
+  }
+  return stored === 'true';
+}
+
+export function setVoiceMuted(muted: boolean): void {
+  try {
+    localStorage.setItem(MUTE_STORAGE_KEY, muted ? 'true' : 'false');
+    if (muted) {
+      stopSpeech();
+    }
+    window.dispatchEvent(new CustomEvent('nutrizero_voice_mute_changed', { detail: muted }));
+  } catch (err) {
+    console.warn('Failed to update voice mute setting', err);
+  }
+}
+
+export function toggleVoiceMute(): boolean {
+  const next = !isVoiceMuted();
+  setVoiceMuted(next);
+  return next;
+}
 
 function cleanMarkdownForSpeech(text: string): string {
   if (!text) return '';
@@ -45,9 +68,15 @@ export function stopSpeech(): void {
   }
 }
 
-export function speakAIResponse(messageId: string, text: string): void {
+export function speakAIResponse(messageId: string, text: string, forcePlay: boolean = false): void {
   try {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+      return;
+    }
+
+    // If muted and not explicitly forced, do not speak
+    if (isVoiceMuted() && !forcePlay) {
+      stopSpeech();
       return;
     }
 
@@ -63,9 +92,9 @@ export function speakAIResponse(messageId: string, text: string): void {
     const cleanedText = cleanMarkdownForSpeech(text);
     if (!cleanedText) return;
 
-    // Speak a clean, digestible portion (first 500 characters of key guidance)
-    const speakPortion = cleanedText.length > 500 
-      ? cleanedText.slice(0, 500) + '... Check the screen for full details.'
+    // Speak a clean, digestible portion (first 400 characters)
+    const speakPortion = cleanedText.length > 400 
+      ? cleanedText.slice(0, 400) + '... Check your screen for complete instructions.'
       : cleanedText;
 
     const utterance = new SpeechSynthesisUtterance(speakPortion);
@@ -73,7 +102,6 @@ export function speakAIResponse(messageId: string, text: string): void {
     utterance.pitch = 1.0;
     utterance.lang = 'en-US';
 
-    // Try to pick a natural, pleasant voice if available
     const voices = window.speechSynthesis.getVoices();
     const preferredVoice = voices.find(v => 
       v.lang.startsWith('en') && (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Premium'))
@@ -84,13 +112,11 @@ export function speakAIResponse(messageId: string, text: string): void {
     }
 
     utterance.onerror = (e) => {
-      // Speech errors (e.g. user navigation cancel) must never break chat
       console.warn('Speech synthesis event notice:', e.error);
     };
 
     window.speechSynthesis.speak(utterance);
   } catch (err) {
-    // Silently continue text chat if speech synthesis encounters an environment issue
-    console.warn('Automatic voice playback silently bypassed:', err);
+    console.warn('Speech synthesis silently bypassed:', err);
   }
 }

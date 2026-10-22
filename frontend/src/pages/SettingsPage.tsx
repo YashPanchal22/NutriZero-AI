@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Settings, Trash2, CheckCircle2, AlertCircle, RefreshCw, Moon, Sparkles, Database, Key, Globe } from 'lucide-react';
+import { Settings, Trash2, CheckCircle2, AlertCircle, RefreshCw, Moon, Sparkles, Database, Key, Globe, Volume2, VolumeX } from 'lucide-react';
 import { apiClient } from '../api/client';
 import { clearAllStoredSessions } from '../services/storage';
+import { isVoiceMuted, setVoiceMuted } from '../services/voice';
 
 export const SettingsPage: React.FC = () => {
   const [geminiStatus, setGeminiStatus] = useState<any>(null);
@@ -9,6 +10,13 @@ export const SettingsPage: React.FC = () => {
   const [clearedNotice, setClearedNotice] = useState(false);
   const [customApiKey, setCustomApiKey] = useState<string>(() => localStorage.getItem('nutrizero_gemini_api_key') || '');
   const [keySavedNotice, setKeySavedNotice] = useState(false);
+  const [voiceMuted, setVoiceMutedState] = useState<boolean>(() => isVoiceMuted());
+
+  const handleToggleVoice = () => {
+    const next = !voiceMuted;
+    setVoiceMuted(next);
+    setVoiceMutedState(next);
+  };
 
   const checkGemini = async () => {
     setIsChecking(true);
@@ -167,6 +175,36 @@ export const SettingsPage: React.FC = () => {
                 {geminiStatus?.message || 'Ready to serve nutrition and zero-waste requests'}
               </span>
             </div>
+          </div>
+        </div>
+
+        {/* Voice Narration Settings Card */}
+        <div className="bg-surface-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-3">
+          <div className="flex items-center gap-2 pb-2 border-b border-slate-800">
+            {voiceMuted ? <VolumeX className="w-4 h-4 text-rose-400" /> : <Volume2 className="w-4 h-4 text-emerald-400" />}
+            <h3 className="font-semibold text-white text-sm">Automatic Voice Speech</h3>
+          </div>
+          <div className="flex items-center justify-between pt-1">
+            <div>
+              <div className="text-xs font-medium text-slate-200">
+                {voiceMuted ? 'Voice is Muted (Silent Mode Active)' : 'Voice is Enabled (Speaks AI responses)'}
+              </div>
+              <div className="text-[11px] text-slate-400">
+                Controls whether AI responses are spoken aloud through browser speech synthesis.
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={handleToggleVoice}
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all active:scale-95 flex items-center gap-1.5 ${
+                voiceMuted
+                  ? 'bg-rose-950/40 text-rose-300 border-rose-800/40 hover:bg-rose-900/60'
+                  : 'bg-emerald-950/40 text-emerald-300 border-emerald-800/40 hover:bg-emerald-900/60'
+              }`}
+            >
+              {voiceMuted ? <VolumeX className="w-3.5 h-3.5 text-rose-400" /> : <Volume2 className="w-3.5 h-3.5 text-emerald-400" />}
+              <span>{voiceMuted ? 'Muted (Click to Enable)' : 'Active (Click to Mute)'}</span>
+            </button>
           </div>
         </div>
 
