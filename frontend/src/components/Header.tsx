@@ -38,7 +38,7 @@ export const Header: React.FC<HeaderProps> = ({
         </button>
         <div className="flex items-center gap-2.5">
           <img
-            src="/logo.png"
+            src="./logo.png"
             alt="NutritionAI Logo"
             className="w-7 h-7 rounded-lg object-cover border border-emerald-500/30 flex-shrink-0 shadow-sm"
             onError={(e) => {
@@ -48,6 +48,10 @@ export const Header: React.FC<HeaderProps> = ({
           <h1 className="font-display font-semibold text-sm lg:text-base text-white tracking-wide truncate">
             {title}
           </h1>
+          <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full ml-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            Live Demo
+          </span>
         </div>
       </div>
 

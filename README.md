@@ -1,6 +1,7 @@
 # 🌿 NutriZero AI — UN SDG 2 Zero Hunger Food & Nutrition Assistant
 
 [![UN SDG 2: Zero Hunger](https://img.shields.io/badge/UN%20SDG-Goal%202%3A%20Zero%20Hunger-DDA63A?style=for-the-badge&logo=unitednations&logoColor=white)](https://sdgs.un.org/goals/goal2)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-2ea44f?style=for-the-badge&logo=githubpages&logoColor=white)](https://yashpanchal22.github.io/NutriZero-AI/)
 [![React 18](https://img.shields.io/badge/React-18.3-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Vite](https://img.shields.io/badge/Vite-5.4-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev)
@@ -9,6 +10,9 @@
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org)
 [![Google Gemini](https://img.shields.io/badge/Google%20Gemini-Flash%20AI-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
+
+> 🚀 **Live Demo on GitHub Pages:** **[https://yashpanchal22.github.io/NutriZero-AI/](https://yashpanchal22.github.io/NutriZero-AI/)**  
+> Runs 100% standalone in the browser with offline-first UN SDG 2 AI knowledge and interactive tools!
 
 **NutriZero AI** is an intelligent, high-impact web application dedicated to **United Nations Sustainable Development Goal 2 (SDG 2: Zero Hunger)**. It delivers accessible nutrition education, budget-conscious meal planning, pantry-ingredient cooking, food-waste reduction, and storage safety guidelines powered by **Google Gemini AI** with resilient domain fallback engines and automatic voice synthesis.
 

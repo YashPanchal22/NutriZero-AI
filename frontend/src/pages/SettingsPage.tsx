@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Settings, Trash2, CheckCircle2, AlertCircle, RefreshCw, Moon, Sparkles, Database } from 'lucide-react';
+import { Settings, Trash2, CheckCircle2, AlertCircle, RefreshCw, Moon, Sparkles, Database, Key, Globe } from 'lucide-react';
 import { apiClient } from '../api/client';
 import { clearAllStoredSessions } from '../services/storage';
 
@@ -7,6 +7,8 @@ export const SettingsPage: React.FC = () => {
   const [geminiStatus, setGeminiStatus] = useState<any>(null);
   const [isChecking, setIsChecking] = useState(false);
   const [clearedNotice, setClearedNotice] = useState(false);
+  const [customApiKey, setCustomApiKey] = useState<string>(() => localStorage.getItem('nutrizero_gemini_api_key') || '');
+  const [keySavedNotice, setKeySavedNotice] = useState(false);
 
   const checkGemini = async () => {
     setIsChecking(true);
@@ -36,6 +38,17 @@ export const SettingsPage: React.FC = () => {
     }
   };
 
+  const handleSaveApiKey = () => {
+    if (customApiKey.trim()) {
+      localStorage.setItem('nutrizero_gemini_api_key', customApiKey.trim());
+    } else {
+      localStorage.removeItem('nutrizero_gemini_api_key');
+    }
+    setKeySavedNotice(true);
+    setTimeout(() => setKeySavedNotice(false), 3000);
+    checkGemini();
+  };
+
   return (
     <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-surface-950">
       <div className="max-w-3xl mx-auto space-y-6">
@@ -48,9 +61,61 @@ export const SettingsPage: React.FC = () => {
             <div>
               <h2 className="font-display text-xl font-bold text-white">Application Settings</h2>
               <p className="text-xs sm:text-sm text-slate-400">
-                Manage backend AI connection, themes, and conversation history.
+                Manage backend AI connection, standalone demo mode, themes, and conversation history.
               </p>
             </div>
+          </div>
+        </div>
+
+        {/* GitHub Pages Live Demo Status Card */}
+        <div className="bg-surface-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+            <div className="flex items-center gap-2">
+              <Globe className="w-5 h-5 text-emerald-400" />
+              <h3 className="font-semibold text-white text-sm">Deployment & Demo Mode</h3>
+            </div>
+            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> GitHub Pages Standalone
+            </span>
+          </div>
+
+          <p className="text-xs text-slate-400 leading-relaxed">
+            NutriZero AI is configured with an offline-first client engine. All features (Chat, Pantry Chef, Budget Meal Planner, Food Waste Reducer, Food Storage, Nutrition Explorer, and Grocery Planner) work directly in your browser without requiring a backend server.
+          </p>
+
+          {/* Optional Direct Gemini API Key */}
+          <div className="bg-surface-950 rounded-xl p-4 border border-slate-800 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Key className="w-4 h-4 text-brand-400" />
+                <span className="text-xs font-medium text-slate-200">Optional: Custom Google Gemini API Key</span>
+              </div>
+              <span className="text-[10px] text-slate-400">Stored in browser localStorage only</span>
+            </div>
+            <p className="text-[11px] text-slate-400">
+              If you want live real-time Gemini AI queries directly in your browser (without relying on the built-in offline generator), paste a free key from Google AI Studio here:
+            </p>
+            <div className="flex gap-2">
+              <input
+                type="password"
+                placeholder="AIzaSy..."
+                value={customApiKey}
+                onChange={(e) => setCustomApiKey(e.target.value)}
+                className="flex-1 bg-surface-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500 font-mono"
+              />
+              <button
+                type="button"
+                onClick={handleSaveApiKey}
+                className="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white rounded-xl text-xs font-semibold transition-all shadow-sm active:scale-95 flex-shrink-0"
+              >
+                Save Key
+              </button>
+            </div>
+            {keySavedNotice && (
+              <div className="text-[11px] text-emerald-400 flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5" /> API Key saved successfully. Direct browser Gemini integration active.
+              </div>
+            )}
           </div>
         </div>
 
@@ -59,7 +124,7 @@ export const SettingsPage: React.FC = () => {
           <div className="flex items-center justify-between pb-3 border-b border-slate-800">
             <div className="flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-brand-400" />
-              <h3 className="font-semibold text-white text-sm">Google Gemini AI Engine</h3>
+              <h3 className="font-semibold text-white text-sm">AI Engine Status</h3>
             </div>
             <button
               type="button"
@@ -81,24 +146,26 @@ export const SettingsPage: React.FC = () => {
                 </span>
               ) : (
                 <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-400 bg-amber-500/10 px-2.5 py-0.5 rounded-full border border-amber-500/20">
-                  <AlertCircle className="w-3.5 h-3.5" /> Offline / Disconnected
+                  <AlertCircle className="w-3.5 h-3.5" /> Standalone Demo Mode Active
                 </span>
               )}
             </div>
 
             <div className="flex items-center justify-between text-xs">
               <span className="text-slate-400">AI Provider:</span>
-              <span className="text-slate-200 font-medium">{geminiStatus?.provider || 'Google Gemini'}</span>
+              <span className="text-slate-200 font-medium">{geminiStatus?.provider || 'NutriZero AI Engine'}</span>
             </div>
 
             <div className="flex items-center justify-between text-xs">
               <span className="text-slate-400">Model:</span>
-              <span className="text-brand-400 font-mono font-medium">{geminiStatus?.model || 'gemini-3.6-flash'}</span>
+              <span className="text-brand-400 font-mono font-medium">{geminiStatus?.model || 'gemini-1.5-flash / Offline Zero Hunger AI'}</span>
             </div>
 
             <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-800/50">
-              <span className="text-slate-400">API Key Security:</span>
-              <span className="text-emerald-400 font-medium">Secured on Backend Only</span>
+              <span className="text-slate-400">Status Info:</span>
+              <span className="text-slate-300 font-medium truncate max-w-[280px]">
+                {geminiStatus?.message || 'Ready to serve nutrition and zero-waste requests'}
+              </span>
             </div>
           </div>
         </div>
@@ -128,7 +195,7 @@ export const SettingsPage: React.FC = () => {
           </div>
 
           <p className="text-xs text-slate-400 leading-relaxed">
-            All conversations and stats are saved locally on your browser. No personal identification data is ever sent to third parties.
+            All conversations and stats are saved locally on your browser in localStorage. No personal data is sent to external servers.
           </p>
 
           <div className="pt-2 flex items-center justify-between">

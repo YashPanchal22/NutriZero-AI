@@ -353,7 +353,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({ currentSessionId, onSessionU
             <div className="text-center py-4 sm:py-6 px-4 mb-2 animate-fadeIn">
               <div className="w-20 h-20 mx-auto mb-3 rounded-2xl overflow-hidden border-2 border-emerald-500/40 shadow-xl shadow-emerald-500/20 bg-surface-900 p-1 group">
                 <img
-                  src="/logo.png"
+                  src="./logo.png"
                   alt="NutritionAI Logo"
                   className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform"
                 />
@@ -381,7 +381,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({ currentSessionId, onSessionU
                 {isAI && (
                   <div className="w-8 h-8 rounded-xl overflow-hidden border border-emerald-500/40 flex-shrink-0 flex items-center justify-center mt-1 shadow-md shadow-emerald-500/20 bg-surface-900">
                     <img
-                      src="/logo.png"
+                      src="./logo.png"
                       alt="NutritionAI"
                       className="w-full h-full object-cover"
                       onError={(e) => {
@@ -494,7 +494,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({ currentSessionId, onSessionU
           {isLoading && (
             <div className="flex gap-3 sm:gap-4 justify-start">
               <div className="w-8 h-8 rounded-xl overflow-hidden border border-emerald-500/40 flex-shrink-0 flex items-center justify-center shadow-md shadow-emerald-500/20 bg-surface-900">
-                <img src="/logo.png" alt="NutritionAI" className="w-full h-full object-cover animate-pulse" />
+                <img src="./logo.png" alt="NutritionAI" className="w-full h-full object-cover animate-pulse" />
               </div>
               <div className="bg-surface-900 border border-slate-800 rounded-2xl px-5 py-4 flex items-center gap-2 shadow-lg">
                 <span className="w-2 h-2 rounded-full bg-brand-400 animate-bounce [animation-delay:-0.3s]" />

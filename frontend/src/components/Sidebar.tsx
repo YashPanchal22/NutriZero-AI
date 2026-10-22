@@ -114,7 +114,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <div className="flex items-center gap-2.5 min-w-0">
             <div className="w-10 h-10 rounded-xl overflow-hidden border border-emerald-500/40 shadow-lg shadow-emerald-500/20 flex-shrink-0 bg-surface-950 flex items-center justify-center p-0.5 group">
               <img
-                src="/logo.png"
+                src="./logo.png"
                 alt="NutritionAI Logo"
                 className="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform"
                 onError={(e) => {
@@ -309,7 +309,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Sidebar Footer */}
         <div className="p-3 border-t border-slate-800/80 bg-surface-950/40 flex items-center gap-2">
-          <img src="/logo.png" alt="NutritionAI Logo" className="w-5 h-5 rounded-full object-cover border border-emerald-500/30 flex-shrink-0" />
+          <img src="./logo.png" alt="NutritionAI Logo" className="w-5 h-5 rounded-full object-cover border border-emerald-500/30 flex-shrink-0" />
           <div className="flex-1 flex items-center justify-between text-[11px] text-slate-400">
             <span>Eat Smart · Live Well</span>
             <span className="text-emerald-400 font-semibold">SDG 2</span>
